@@ -262,5 +262,17 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const lengthSlider = document.getElementById('lengthSlider')
+        const lengthValue = document.getElementById('lengthValue')
+      
+        lengthSlider.addEventListener('input', function () {
+          lengthValue.textContent = this.value
+        })
+
+      })
+      
+    </script>
   </body>
 </html>
