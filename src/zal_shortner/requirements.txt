@@ -1,0 +1,3 @@
+qrcode
+Pillow
+Django==5.1.5
