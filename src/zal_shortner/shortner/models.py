@@ -37,3 +37,20 @@ class ShortenedURL(models.Model):
 
     def __str__(self):
         return f"{self.main_url} ({self.slug})"
+    
+    def track_unique_visit(self, request):
+        if not request.session.session_key:
+            request.session.save()
+
+        session_key = request.session.session_key
+
+        PageVisit.objects.get_or_create(session_key=session_key, url=self)
+
+        self.total_clicks += 1
+        self.save()
+
+
+class PageVisit(models.Model):
+    session_key = models.CharField(max_length=50)
+    url = models.ForeignKey("shortner.ShortenedURL", on_delete=models.CASCADE, related_name="unique_visits")
+    created_at = models.DateTimeField(auto_now_add=True)

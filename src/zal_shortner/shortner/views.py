@@ -23,8 +23,7 @@ def result(request):
 
 def redirect_view(request, pk):
     s = get_object_or_404(ShortenedURL, pk=pk)
-    s.total_clicks += 1
-    s.save()
+    s.track_unique_visit(request)
     return redirect(s.main_url)
 
 
