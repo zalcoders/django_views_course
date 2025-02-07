@@ -152,7 +152,7 @@
   <body class="pb-5">
     <nav class="navbar navbar-expand-lg mb-5">
       <div class="container py-3">
-        <a class="navbar-brand d-flex align-items-center gap-3" href="#">
+        <a class="navbar-brand d-flex align-items-center gap-3" href="/">
           <div class="icon-box">
             <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="text-primary">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
@@ -243,15 +243,16 @@
       <div class="card">
         <div class="card-body p-4">
           <h5 class="mb-4 text-white">Recent Links</h5>
+          {% for link in recent_links %}
           <div class="link-item">
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
               <div>
-                <div class="shortened-url mb-1">urlify.io/tech-blog</div>
-                <div class="original-url">https://example.com/blog/top-10-tech-trends-2024</div>
+                <div class="shortened-url mb-1">{{ request.get_host }}{% url 'shortner:short-url' link.slug %}</div>
+                <div class="original-url">{{ link.main_url }}</div>
               </div>
               <div class="d-flex align-items-center gap-4">
-                <div class="text-muted">842 clicks</div>
-                <button class="copy-btn" onclick="copyUrl('urlify.io/tech-blog', this)">
+                <div class="text-muted">{{ link.total_clicks }} clicks</div>
+                <button class="copy-btn" onclick="copyUrl('{{ request.get_host }}{% url 'shortner:short-url' link.slug %}', this)">
                   <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
                   </svg>Copy
@@ -259,22 +260,7 @@
               </div>
             </div>
           </div>
-          <div class="link-item">
-            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-              <div>
-                <div class="shortened-url mb-1">urlify.io/sale-2024</div>
-                <div class="original-url">https://example.com/products/spring-sale-2024</div>
-              </div>
-              <div class="d-flex align-items-center gap-4">
-                <div class="text-muted">1,203 clicks</div>
-                <button class="copy-btn" onclick="copyUrl('urlify.io/sale-2024', this)">
-                  <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
-                  </svg>Copy
-                </button>
-              </div>
-            </div>
-          </div>
+          {% endfor %}
         </div>
       </div>
     </main>

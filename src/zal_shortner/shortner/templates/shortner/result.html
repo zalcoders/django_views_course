@@ -157,7 +157,7 @@
   <body class="pb-5">
     <nav class="navbar navbar-expand-lg mb-5">
       <div class="container py-3">
-        <a class="navbar-brand d-flex align-items-center gap-3" href="#">
+        <a class="navbar-brand d-flex align-items-center gap-3" href="/">
           <div class="icon-box">
             <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="text-primary">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
@@ -236,7 +236,7 @@
             <div class="col-md-4">
               <div class="result-box">
                 <p class="text-muted mb-1">Total Clicks</p>
-                <div class="stat-value">0</div>
+                <div class="stat-value">{{ url.total_clicks }}</div>
               </div>
             </div>
             <div class="col-md-4">
@@ -248,7 +248,7 @@
             <div class="col-md-4">
               <div class="result-box">
                 <p class="text-muted mb-1">Creation Time</p>
-                <div class="stat-value" style="font-size: 1.25rem">Just now</div>
+                <div class="stat-value" style="font-size: 1.25rem">{{ url.created_at }}</div>
               </div>
             </div>
           </div>
