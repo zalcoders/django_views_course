@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse
 
 from shortner.models import ShortenedURL
 
@@ -17,3 +18,8 @@ def home_page(request):
    
 def result(request):
     return render(request, "shortner/result.html", {})
+
+
+def redirect_view(request, pk):
+    s = get_object_or_404(ShortenedURL, pk=pk)
+    return HttpResponse(s.main_url)
