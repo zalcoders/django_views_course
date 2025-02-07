@@ -1,10 +1,9 @@
 from django.contrib import admin
-from django.urls import path, register_converter
+from django.urls import path, register_converter, include
 
 from django.conf.urls.static import static
 from django.conf import settings
 
-from shortner import views as shortner_views
 from url_converters import ShortenedUrlSlugConverter
 
 
@@ -13,11 +12,7 @@ register_converter(ShortenedUrlSlugConverter, "short_url_id")
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    path('result', shortner_views.result),
-
-    path('', shortner_views.home_page),
-
-    path('<short_url_id:pk>', shortner_views.redirect_view),
+    path('', include("shortner.urls")),
 ]
 
 if settings.DEBUG:

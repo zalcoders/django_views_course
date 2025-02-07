@@ -15,6 +15,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+SITE_BASE_URL = "https://zal.ir"
+
 
 # Application definition
 

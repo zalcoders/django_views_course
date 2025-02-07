@@ -3,6 +3,8 @@ import uuid
 import qrcode
 from io import BytesIO
 from django.core.files.base import ContentFile
+from django.urls import reverse
+from django.conf import settings
 
 from utils import generate_shortened_url_from_number
 
@@ -25,7 +27,8 @@ class ShortenedURL(models.Model):
             self.save(update_fields=['slug'])
 
             # Generate QR Code
-            qr = qrcode.make(self.slug)
+            qr_text = settings.SITE_BASE_URL + reverse("shortner:short-url", args=(self.slug,))
+            qr = qrcode.make(qr_text)
             buffer = BytesIO()
             qr.save(buffer, format='PNG')
             self.qr_code.save(f'qr_{self.slug}.png', ContentFile(buffer.getvalue()), save=False)
