@@ -9,7 +9,7 @@ from utils import generate_shortened_url_from_number
 
 class ShortenedURL(models.Model):
     main_url = models.URLField()
-    slug = models.SlugField(unique=True, blank=True, max_length=32, default=uuid.uuid4)
+    slug = models.SlugField(unique=True, blank=True, max_length=40, default=uuid.uuid4)
     total_clicks = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     qr_code = models.ImageField(upload_to="url_qr_codes/", blank=True, null=True)
@@ -31,3 +31,6 @@ class ShortenedURL(models.Model):
             self.qr_code.save(f'qr_{self.slug}.png', ContentFile(buffer.getvalue()), save=False)
 
             super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.main_url} ({self.slug})"
