@@ -6,3 +6,6 @@ urlpatterns = [
 
     path('', include("current_time.urls")),
 ]
+
+
+handler404 = "general.views.handler404"
