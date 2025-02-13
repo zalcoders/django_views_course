@@ -238,7 +238,7 @@
       <div class="timezone-form-container">
         <div class="current-timezone">
           <div class="timezone-label">Current Timezone:</div>
-          <div class="timezone-value" id="current-timezone">UTC (Coordinated Universal Time)</div>
+          <div class="timezone-value" id="current-timezone">{{ selected_timezone }}</div>
         </div>
         <form id="timezone-form" method="post">
           {% csrf_token %}
@@ -257,7 +257,7 @@
               <option value="Europe/Paris">Central European Time (CET)</option>
               <option value="Asia/Dubai">Gulf Standard Time (GST)</option>
               <option value="Asia/Singapore">Singapore Time (SGT)</option>
-              <option value="Asia/Singaporewsefvergerg">Singapore Time (SGT)</option>
+              <option value="InvalidTimeZone">Invaalid TimeZone</option>
             </select>
           </div>
           <button type="submit" class="submit-btn">Update Timezone</button>
