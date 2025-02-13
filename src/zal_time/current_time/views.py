@@ -19,6 +19,7 @@ ALLOWED_TIMEZONES = [
 
 # @require_http_methods(["POST"])
 def home(request):
+    print(request.POST)
     if request.method == "POST":
         selected_timezone = request.POST.get("timezone", "")
 
