@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import Http404
 import datetime as dt
 from django.views.decorators.http import require_http_methods
+from django.http import JsonResponse
 
 import pytz
 
@@ -40,3 +41,12 @@ def home(request):
         }
     response = render(request, "current_time/home.html", context)
     return response
+
+def time_api(request, tz):
+    timezone = pytz.timezone(tz)
+    current_time = dt.datetime.now(timezone)
+    data = {
+        "timezone": tz,
+        "time": current_time.strftime("%Y-%m-%dT%H:%M:%S")
+    }
+    return JsonResponse(data)

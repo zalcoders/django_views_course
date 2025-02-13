@@ -5,6 +5,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('', include("current_time.urls")),
+    path('weather/', include("weather_report.urls")),
 ]
 
 

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'current_time',
     'general',
+    'weather_report',
 ]
 
 MIDDLEWARE = [
