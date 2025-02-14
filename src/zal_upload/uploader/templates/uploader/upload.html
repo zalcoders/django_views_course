@@ -171,7 +171,10 @@
                 <p class="text-muted mb-3">or</p>
                 <label class="btn btn-upload text-white">
                   <span>Choose Files</span>
-                  <input type="file" id="fileInput" class="d-none" />
+                  <form method="post" id="fileForm" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input name="my_file" type="file" id="fileInput" class="d-none" />
+                  </form>
                 </label>
                 <small class="d-block text-muted mt-3">
                   <i class="fas fa-info-circle me-1"></i>
@@ -216,6 +219,7 @@
       const progressBar = document.querySelector('.progress-bar')
       const progress = document.getElementById('uploadProgress')
       const successAlert = document.getElementById('successAlert')
+      const fileForm = document.getElementById('fileForm')
       
       ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach((eventName) => {
         uploadArea.addEventListener(eventName, preventDefaults)
@@ -250,7 +254,8 @@
       
       function handleFileSelect(e) {
         const file = e.target.files[0]
-        handleFile(file)
+        fileForm.submit();
+        // handleFile(file)
       }
       
       function handleFile(file) {

@@ -1,0 +1,25 @@
+<html>
+    <head></head>
+    <body>
+
+        <form id="myForm">
+            <input type="text" name="phone">
+
+            <button type="submit">send</button>
+        </form>
+
+        <a id="submitter">click!</a>
+        
+    </body>
+
+    <script>
+        const submitter = document.getElementById("submitter");
+        const myForm = document.getElementById("myForm");
+
+        function submitMyForm(){
+            myForm.submit();
+        }
+
+        submitter.addEventListener("click", submitMyForm)
+    </script>
+</html>
