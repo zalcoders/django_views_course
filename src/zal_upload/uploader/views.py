@@ -1,13 +1,12 @@
 from django.shortcuts import render
+from utils import upload_file_to_s3
 
 
 def upload(request):
-    f = request.FILES["my_file"]
+    if request.method == "POST":
+        f = request.FILES["my_file"]
 
-    file_path = f"/home/zalcoders/projects/Recording/DjangoViews/tmp/{f.name}"
-    with open(file_path, "wb") as destination_file:
-        for chunk in f.chunks():
-            destination_file.write(chunk)
+        upload_file_to_s3(f, "zalcoders-upload", f.name)
 
     return render(request, "uploader/upload.html", {})
 
