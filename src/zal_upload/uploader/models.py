@@ -1,5 +1,7 @@
 from django.db import models
-from uuid import uuid4
+from django.utils import timezone
+from datetime import timedelta
+from utils import human_readable_time_diff
 
 
 class UploaddedFile(models.Model):
@@ -10,3 +12,30 @@ class UploaddedFile(models.Model):
     size = models.FloatField("File Size")
     content_type = models.CharField("Content Type", max_length=50)
     slug = models.CharField("Slug", max_length=50, default=None, blank=True, null=True)
+
+    @property
+    def get_size_str(self):
+        size = self.size / 1000
+        if size < 1024:
+            return "%.2f KB" % size
+        elif size >= 1024:
+            size = size / 1024
+            return "%.2f MB" % size
+        
+    @property
+    def uploaded_at_str(self):
+        now = timezone.now()
+        diff = now - self.created_at
+        total_seconds = diff.total_seconds()
+
+        return human_readable_time_diff(total_seconds)
+
+        
+        
+    @property
+    def url_expiration_remaining_time(self):
+        expiration_time = self.created_at + timedelta(days=1)
+        diff = expiration_time - timezone.now()
+        total_seconds = diff.total_seconds()
+
+        return human_readable_time_diff(total_seconds)

@@ -254,8 +254,14 @@
       
       function handleFileSelect(e) {
         const file = e.target.files[0]
-        fileForm.submit();
-        // handleFile(file)
+        if (file.size / 1000 < 1024 * 10){
+          fileForm.submit();
+          // handleFile(file)
+        } else {
+          resetUpload();
+          alert("File size should be less than 10 MB!");
+        }
+        
       }
       
       function handleFile(file) {

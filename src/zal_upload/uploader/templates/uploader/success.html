@@ -141,11 +141,11 @@
                 </div>
                 <div class="detail-row">
                   <span class="text-muted">Size</span>
-                  <span>{{ file.size }} KB</span>
+                  <span>{{ file.get_size_str }}</span>
                 </div>
                 <div class="detail-row">
                   <span class="text-muted">Uploaded</span>
-                  <span>{{ file.created_at }}</span>
+                  <span>{{ file.uploaded_at_str }}</span>
                 </div>
                 <div class="detail-row">
                   <span class="text-muted">Type</span>
