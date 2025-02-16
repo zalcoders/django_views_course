@@ -6,6 +6,8 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.http import Http404, JsonResponse
+from django.views.decorators.http import require_http_methods
+import time
 
 
 SECONDS_IN_DAYS = 24 * 60 * 60
@@ -45,7 +47,9 @@ def test_view(request):
     return render(request, "uploader/test.html", {})
 
 
+@require_http_methods(["POST"])
 def get_presigned_url(request, file_uuid):
     uploadded_file = get_object_or_404(UploaddedFile, slug=file_uuid)
     url = generate_presigned_url("zalcoders-upload", uploadded_file.s3_file_key)
+    time.sleep(3)
     return JsonResponse({"url": url})

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Zal Uploiader | {{ file.file_name }}</title>
+    <title>Zal Uploader | {{ file.file_name }}</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet" />
     <style>
@@ -148,10 +148,8 @@
               </div>
 
               <div class="d-grid gap-3">
-                <button class="btn btn-primary btn-action"><i class="fas fa-download me-2"></i>Download File</button>
-                <a href="{% url 'uploader:upload' %}">
-                  <button class="btn btn-outline btn-action"><i class="fas fa-upload me-2"></i>Upload Another</button>
-                </a>
+                <button onclick="startDownload()" id="downloadBtn" class="btn btn-primary btn-action"><i class="fas fa-download me-2"></i>Download File</button>
+                <a href="{% url 'uploader:upload' %}"><button class="btn btn-outline btn-action"><i class="fas fa-upload me-2"></i>Upload Another</button></a>
               </div>
 
               <div class="share-link">
@@ -170,6 +168,8 @@
     </div>
 
     <script>
+      const downloadBtn = document.getElementById('downloadBtn')
+
       document.querySelector('.copy-btn').addEventListener('click', function () {
         const input = document.querySelector('.share-link input')
         input.select()
@@ -180,6 +180,24 @@
           this.innerHTML = '<i class="fas fa-copy me-2"></i>Copy'
         }, 2000)
       })
+
+      function proccessDownload(url){
+        downloadBtn.innerHTML = '<i class="fas fa-download me-2"></i>Download File'
+        downloadBtn.setAttribute("onclick", "startDownload()");
+        window.open(url, '_blank').focus()
+      }
+      
+      function startDownload() {
+        downloadBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading ...'
+        downloadBtn.removeAttribute("onclick");
+        fetch("{% url 'uploader:get_presigned_url' file.slug %}", {
+          method: 'POST',
+          headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+        })
+          .then((response) => response.json())
+          .then((data) => proccessDownload(data.url))
+          .catch((error) => console.error(error))
+      }
     </script>
   </body>
 </html>
