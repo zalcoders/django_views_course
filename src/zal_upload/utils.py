@@ -2,6 +2,8 @@ import boto3
 from botocore.exceptions import ClientError
 from django.conf import settings
 
+from uuid import uuid4
+
 
 def upload_file_to_s3(f, bucket, key):
     # Upload the file
@@ -12,7 +14,11 @@ def upload_file_to_s3(f, bucket, key):
         aws_secret_access_key=settings.S3_SECRET_KEY,
     )
     try:
-        response = s3_client.put_object(Body=f, Bucket=bucket, Key=key)
+        file_uuid = uuid4()
+        key = f"{file_uuid}/{key}"
+        response = s3_client.put_object(
+            Body=f, Bucket=bucket, Key=key
+        )
     except ClientError as e:
-        return False
-    return True
+        return False, None, file_uuid
+    return True, key, file_uuid

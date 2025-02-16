@@ -58,6 +58,7 @@
         border-radius: 12px;
         font-weight: 600;
         transition: all 0.3s ease;
+        width: 100%;
       }
       
       .btn-primary {
@@ -136,29 +137,31 @@
               <div class="file-details">
                 <div class="detail-row">
                   <span class="text-muted">File Name</span>
-                  <span class="fw-semibold">document.pdf</span>
+                  <span class="fw-semibold">{{ file.file_name }}</span>
                 </div>
                 <div class="detail-row">
                   <span class="text-muted">Size</span>
-                  <span>2.4 MB</span>
+                  <span>{{ file.size }} KB</span>
                 </div>
                 <div class="detail-row">
                   <span class="text-muted">Uploaded</span>
-                  <span>Just now</span>
+                  <span>{{ file.created_at }}</span>
                 </div>
                 <div class="detail-row">
                   <span class="text-muted">Type</span>
-                  <span>PDF Document</span>
+                  <span>{{ file.content_type }}</span>
                 </div>
               </div>
 
               <div class="d-grid gap-3">
                 <button class="btn btn-primary btn-action"><i class="fas fa-download me-2"></i>Download File</button>
-                <button class="btn btn-outline btn-action"><i class="fas fa-upload me-2"></i>Upload Another</button>
+                <a href="{% url 'uploader:upload' %}">
+                  <button class="btn btn-outline btn-action"><i class="fas fa-upload me-2"></i>Upload Another</button>
+                </a>
               </div>
 
               <div class="share-link">
-                <input type="text" value="https://example.com/file/abc123" readonly />
+                <input type="text" value="{{ site_url }}{% url 'uploader:download' file.slug %}" readonly />
                 <button class="copy-btn"><i class="fas fa-copy me-2"></i>Copy</button>
               </div>
 
