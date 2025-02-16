@@ -1,0 +1,4 @@
+boto3
+Django==5.1.5
+psycopg
+requests
