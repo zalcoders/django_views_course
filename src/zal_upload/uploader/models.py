@@ -2,6 +2,8 @@ from django.db import models
 from django.utils import timezone
 from datetime import timedelta
 from utils import human_readable_time_diff
+from django.conf import settings
+from django.urls import reverse
 
 
 class UploaddedFile(models.Model):
@@ -12,6 +14,7 @@ class UploaddedFile(models.Model):
     size = models.FloatField("File Size")
     content_type = models.CharField("Content Type", max_length=50)
     slug = models.CharField("Slug", max_length=50, default=None, blank=True, null=True)
+    short_url = models.CharField("Short URL", null=True, blank=True, max_length=256)
 
     @property
     def get_size_str(self):
@@ -39,3 +42,10 @@ class UploaddedFile(models.Model):
         total_seconds = diff.total_seconds()
 
         return human_readable_time_diff(total_seconds)
+    
+    @property
+    def final_url(self):
+        if self.short_url:
+            return self.short_url
+        
+        return f"{ settings.SITE_URL }{ reverse("uploader:download", args=(self.slug,)) }"

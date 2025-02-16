@@ -9,8 +9,10 @@ from django.http import Http404, JsonResponse
 from django.views.decorators.http import require_http_methods
 import json
 from django.urls import reverse
+import requests
 
 SECONDS_IN_DAYS = 24 * 60 * 60
+
 
 def upload(request):
     if request.method == "POST":
@@ -30,9 +32,14 @@ def upload(request):
 
             site_url = settings.SITE_URL
 
-            return render(request, "uploader/success.html", {"file": uploadded_file, "site_url": site_url})
+            return render(
+                request,
+                "uploader/success.html",
+                {"file": uploadded_file, "site_url": site_url},
+            )
 
     return render(request, "uploader/upload.html", {})
+
 
 @require_http_methods(["POST"])
 def upload_ajax(request):
@@ -58,7 +65,11 @@ def download(request, file_uuid):
     if (timezone.now() - uploadded_file.created_at).total_seconds() > SECONDS_IN_DAYS:
         raise Http404("File not found")
     site_url = settings.SITE_URL
-    return render(request, "uploader/download.html", {"file": uploadded_file, "site_url": site_url})
+    return render(
+        request,
+        "uploader/download.html",
+        {"file": uploadded_file, "site_url": site_url},
+    )
 
 
 def test_view(request):
@@ -71,15 +82,18 @@ def get_presigned_url(request, file_uuid):
     url = generate_presigned_url("zalcoders-upload", uploadded_file.s3_file_key)
     return JsonResponse({"url": url})
 
+
 @require_http_methods(["POST"])
 def create_put_presigned_url(request):
     raw_data = request.body
-    data = json.loads(raw_data.decode('utf8'))
+    data = json.loads(raw_data.decode("utf8"))
     file_name = data["name"]
     file_size = float(data["size"])
     content_type = data["content_type"]
 
-    url, slug, s3_file_key = generate_put_presigned_url("zalcoders-upload", file_name, content_type)
+    url, slug, s3_file_key = generate_put_presigned_url(
+        "zalcoders-upload", file_name, content_type
+    )
 
     uploadded_file = UploaddedFile(
         file_name=file_name,
@@ -90,6 +104,20 @@ def create_put_presigned_url(request):
     )
     uploadded_file.save()
 
-    download_url = reverse("uploader:download", args=(slug, ))
+    download_url = reverse("uploader:download", args=(slug,))
 
+    if settings.SHOULD_CREATE_SHORT_URL:
+        try:
+            full_download_url = settings.SITE_URL + download_url
+
+            response = requests.get(
+                f"{settings.SHORTNER_SERVICE_URL}/api/generate/?url={full_download_url}"
+            )
+
+            data = response.json()
+            uploadded_file.short_url = data["result"]
+            uploadded_file.save()
+
+        except Exception as e:
+            print(e)
     return JsonResponse({"url": url, "download_url": download_url})

@@ -17,6 +17,8 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 SITE_URL = os.environ.get("SITE_URL", "http://localhost:8000")
+SHORTNER_SERVICE_URL = os.environ.get("SITE_URL", "https://zal-shortner.liara.run/")
+SHOULD_CREATE_SHORT_URL = bool(os.environ.get("SHOULD_CREATE_SHORT_URL", "1"))
 
 
 # Application definition

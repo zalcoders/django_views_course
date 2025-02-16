@@ -11,7 +11,7 @@ from uploader.views import (
 app_name = "uploader"
 urlpatterns = [
     path("", upload, name="upload"),
-    path("download/<uuid:file_uuid>", download, name="download"),
+    path("download/<uuid:file_uuid>/", download, name="download"),
     path(
         "get_presigned_url/<uuid:file_uuid>",
         get_presigned_url,

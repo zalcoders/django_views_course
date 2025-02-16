@@ -1,6 +1,10 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.http import JsonResponse
 
 from shortner.models import ShortenedURL
+from django.views.decorators.csrf import csrf_exempt
+from django.urls import reverse
+from django.conf import settings
 
 def home_page(request):
     recent_links = ShortenedURL.objects.order_by("-created_at")[:2]
@@ -31,3 +35,13 @@ def dashboard(request, pk):
     s = get_object_or_404(ShortenedURL, pk=pk)
     return render(request, "shortner/result.html", {"url": s})
 
+@csrf_exempt
+def get_short_url(request):
+    url = request.GET.get("url")
+    
+    s = ShortenedURL(main_url=url)
+    s.save()
+
+    url = settings.SITE_BASE_URL + reverse("shortner:short-url", args=(s.slug, ))
+
+    return JsonResponse({"result": url})
