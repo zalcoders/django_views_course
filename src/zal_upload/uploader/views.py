@@ -1,11 +1,11 @@
 from django.shortcuts import render
-from utils import upload_file_to_s3
+from utils import upload_file_to_s3, generate_presigned_url
 from uploader.models import UploaddedFile
 
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from django.http import Http404
+from django.http import Http404, JsonResponse
 
 
 SECONDS_IN_DAYS = 24 * 60 * 60
@@ -43,3 +43,9 @@ def download(request, file_uuid):
 
 def test_view(request):
     return render(request, "uploader/test.html", {})
+
+
+def get_presigned_url(request, file_uuid):
+    uploadded_file = get_object_or_404(UploaddedFile, slug=file_uuid)
+    url = generate_presigned_url("zalcoders-upload", uploadded_file.s3_file_key)
+    return JsonResponse({"url": url})

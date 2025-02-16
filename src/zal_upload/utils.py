@@ -41,3 +41,18 @@ def human_readable_time_diff(total_seconds):
     else:
         minutes = int(total_seconds / 60)
         return f"{minutes} Minutes"
+
+
+def generate_presigned_url(bucket, key):
+    s3_client = boto3.client(
+        "s3",
+        endpoint_url=settings.S3_URL,
+        aws_access_key_id=settings.S3_ACCESS_KEY,
+        aws_secret_access_key=settings.S3_SECRET_KEY,
+    )
+
+    try:
+        response = s3_client.generate_presigned_url("get_object", Params={"Bucket": bucket, "Key":  key}, ExpiresIn=5*3600)
+        return response
+    except ClientError as e:
+        return None
