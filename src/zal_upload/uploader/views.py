@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from utils import upload_file_to_s3, generate_presigned_url
+from utils import upload_file_to_s3, generate_presigned_url, generate_put_presigned_url
 from uploader.models import UploaddedFile
 
 from django.conf import settings
@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.http import Http404, JsonResponse
 from django.views.decorators.http import require_http_methods
+import json
 
 
 SECONDS_IN_DAYS = 24 * 60 * 60
@@ -68,4 +69,25 @@ def test_view(request):
 def get_presigned_url(request, file_uuid):
     uploadded_file = get_object_or_404(UploaddedFile, slug=file_uuid)
     url = generate_presigned_url("zalcoders-upload", uploadded_file.s3_file_key)
+    return JsonResponse({"url": url})
+
+@require_http_methods(["POST"])
+def create_put_presigned_url(request):
+    raw_data = request.body
+    data = json.loads(raw_data.decode('utf8'))
+    file_name = data["name"]
+    file_size = float(data["size"])
+    content_type = data["content_type"]
+
+    url, slug, s3_file_key = generate_put_presigned_url("zalcoders-upload", file_name, content_type)
+
+    uploadded_file = UploaddedFile(
+        file_name=file_name,
+        s3_file_key=s3_file_key,
+        size=file_size,
+        content_type=content_type,
+        slug=slug,
+    )
+    uploadded_file.save()
+
     return JsonResponse({"url": url})

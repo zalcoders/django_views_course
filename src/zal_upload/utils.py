@@ -21,9 +21,7 @@ def upload_file_to_s3(f, bucket, key):
     try:
         file_uuid = uuid4()
         key = f"{file_uuid}/{key}"
-        response = s3_client.put_object(
-            Body=f, Bucket=bucket, Key=key
-        )
+        response = s3_client.put_object(Body=f, Bucket=bucket, Key=key)
     except ClientError as e:
         return False, None, file_uuid
     return True, key, file_uuid
@@ -52,7 +50,31 @@ def generate_presigned_url(bucket, key):
     )
 
     try:
-        response = s3_client.generate_presigned_url("get_object", Params={"Bucket": bucket, "Key":  key}, ExpiresIn=5*3600)
+        response = s3_client.generate_presigned_url(
+            "get_object", Params={"Bucket": bucket, "Key": key}, ExpiresIn=5 * 3600
+        )
         return response
     except ClientError as e:
         return None
+
+
+def generate_put_presigned_url(bucket, file_name, content_type):
+    s3_client = boto3.client(
+        "s3",
+        endpoint_url=settings.S3_URL,
+        aws_access_key_id=settings.S3_ACCESS_KEY,
+        aws_secret_access_key=settings.S3_SECRET_KEY,
+    )
+
+    file_uuid = uuid4()
+    key = f"{file_uuid}/{file_name}"
+
+    try:
+        response = s3_client.generate_presigned_url(
+            "put_object",
+            Params={"Bucket": bucket, "Key": key, "ContentType": content_type},
+            ExpiresIn=15 * 3600,
+        )
+        return response, file_uuid, key
+    except ClientError as e:
+        return None, None, None

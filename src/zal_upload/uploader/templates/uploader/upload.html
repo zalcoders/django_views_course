@@ -255,19 +255,38 @@
       function handleFileSelect(e) {
         const file = e.target.files[0]
         if (file.size / 1000 < 1024 * 200){
-          // fileForm.submit();
-          handleFile(file)
+          create_put_presigned_url(file)
         } else {
           resetUpload();
           alert("File size should be less than 10 MB!");
         }
         
       }
+
+      function create_put_presigned_url(file){
+        const data = {
+          "name": file.name,
+          "size": file.size,
+          "content_type": file.type
+        }
+
+        fetch("{% url 'uploader:create_put_presigned_url' %}", {
+          method: 'POST',
+          headers: { 'X-CSRFToken': '{{ csrf_token }}', "Content-Type": "application/json", },
+          body: JSON.stringify(data),
+        })
+          .then((response) => response.json())
+          .then((data) => handleFile(file, data.url))
+          .catch((error) => console.error(error))
+
+      }
       
-      function handleFile(file) {
+      function handleFile(file, url) {
         fileName.textContent = file.name
         fileInfo.style.display = 'block'
         progress.style.display = 'flex'
+
+        console.log(url);
 
         const xhr = new XMLHttpRequest();
 
@@ -287,8 +306,8 @@
         // Handle error
 
         // Send
-        xhr.open("POST", "https://zalcoders-upload.storage.c2.liara.space/0a95a6dc-ea04-4404-b44f-46a4e7069d70/sample.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=6b96162b-d379-44a7-ae3f-e3cd178bbf19%2F20250216%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250216T121109Z&X-Amz-Expires=259200&X-Amz-SignedHeaders=host&X-Amz-Signature=7bac6543ab668a51553cea5d294696e2883a4c7809907b943965b84ac6cf7f7f");
-        xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}")
+        xhr.open("PUT", url);
+        xhr.setRequestHeader("Content-Type", file.type)
         xhr.send(formData);
       
         /* let width = 0
