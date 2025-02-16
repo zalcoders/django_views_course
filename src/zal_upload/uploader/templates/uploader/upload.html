@@ -105,6 +105,21 @@
       .alert-success i {
         font-size: 1.25rem;
       }
+
+      .alert-failed {
+        background: linear-gradient(145deg, rgba(197, 34, 34, 0.1), rgba(197, 34, 34, 0.2));
+        border: none;
+        border-radius: 12px;
+        color:rgb(209, 43, 43);
+        padding: 1rem 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+      
+      .alert-failed i {
+        font-size: 1.25rem;
+      }
       
       @keyframes pulse {
         0% {
@@ -119,6 +134,9 @@
       }
       
       .success-animation {
+        animation: pulse 0.5s ease-in-out;
+      }
+      .fail-animation {
         animation: pulse 0.5s ease-in-out;
       }
       
@@ -203,6 +221,10 @@
                 <i class="fas fa-check-circle"></i>
                 <span>File uploaded successfully!</span>
               </div>
+              <div class="alert alert-failed mt-3 d-none" id="failAlert">
+                <i class="fas fa-check-circle"></i>
+                <span>File upload failed!</span>
+              </div>
             </div>
           </div>
         </div>
@@ -219,6 +241,7 @@
       const progressBar = document.querySelector('.progress-bar')
       const progress = document.getElementById('uploadProgress')
       const successAlert = document.getElementById('successAlert')
+      const failAlert = document.getElementById('failAlert')
       const fileForm = document.getElementById('fileForm')
       
       ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach((eventName) => {
@@ -276,17 +299,15 @@
           body: JSON.stringify(data),
         })
           .then((response) => response.json())
-          .then((data) => handleFile(file, data.url))
+          .then((data) => handleFile(file, data.url, data.download_url))
           .catch((error) => console.error(error))
 
       }
       
-      function handleFile(file, url) {
+      function handleFile(file, url, download_url) {
         fileName.textContent = file.name
         fileInfo.style.display = 'block'
         progress.style.display = 'flex'
-
-        console.log(url);
 
         const xhr = new XMLHttpRequest();
 
@@ -302,25 +323,30 @@
         })
 
         // Handle success
+        xhr.addEventListener('load', () => {
+          if (xhr.status >= 200 && xhr.status < 300){
+            successAlert.classList.remove('d-none')
+            successAlert.classList.add('success-animation')
+
+            console.log("HERE!");
+
+            setTimeout(() => {window.location = download_url}, 2000);
+          } else {
+            failAlert.classList.remove('d-none')
+            failAlert.classList.add('fail-animation')
+          }
+        })
 
         // Handle error
+        xhr.addEventListener('error', () => {
+            failAlert.classList.remove('d-none')
+            failAlert.classList.add('fail-animation')
+        })
 
         // Send
         xhr.open("PUT", url);
         xhr.setRequestHeader("Content-Type", file.type)
         xhr.send(formData);
-      
-        /* let width = 0
-        const interval = setInterval(() => {
-          if (width >= 100) {
-            clearInterval(interval)
-            successAlert.classList.remove('d-none')
-            successAlert.classList.add('success-animation')
-          } else {
-            width += 2
-            progressBar.style.width = width + '%'
-          }
-        }, 50) */
       }
       
       function resetUpload() {
@@ -330,6 +356,8 @@
         progressBar.style.width = '0%'
         successAlert.classList.add('d-none')
         successAlert.classList.remove('success-animation')
+        failAlert.classList.add('d-none')
+        failAlert.classList.remove('fail-animation')
       }
     </script>
   </body>

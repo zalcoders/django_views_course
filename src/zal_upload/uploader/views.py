@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.http import Http404, JsonResponse
 from django.views.decorators.http import require_http_methods
 import json
-
+from django.urls import reverse
 
 SECONDS_IN_DAYS = 24 * 60 * 60
 
@@ -90,4 +90,6 @@ def create_put_presigned_url(request):
     )
     uploadded_file.save()
 
-    return JsonResponse({"url": url})
+    download_url = reverse("uploader:download", args=(slug, ))
+
+    return JsonResponse({"url": url, "download_url": download_url})
